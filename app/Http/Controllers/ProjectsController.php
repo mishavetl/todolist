@@ -46,10 +46,13 @@ class ProjectsController extends Controller
     {
         $this->validate($request, self::$validationRules);
         $project = Project::findOrFail($id);
+        if ($project->user->id != auth()->id()) {
+            return response("Forbidden", 403);
+        }
         $project->name = request('name');
         $project->save();
 
-        return response(null, 200);
+        return response("Updated", 200);
     }
 
     /**
@@ -61,6 +64,9 @@ class ProjectsController extends Controller
     public function destroy($id)
     {
         $project = Project::findOrFail($id);
+        if ($project->user->id != auth()->id()) {
+            return response("Forbidden", 403);
+        }
         $project->delete();
         return response(null, 204);
     }

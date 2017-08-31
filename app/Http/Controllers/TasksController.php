@@ -43,12 +43,15 @@ class TasksController extends Controller
     {
         $this->validate($request, self::$validationRules);
         $task = Task::findOrFail($id);
+        if ($task->project->user->id != auth()->id()) {
+            return response("Forbidden", 403);
+        }
         $task->name = request('name');
         $task->status = request('status');
         $task->project_id = request('project_id');
         $task->save();
 
-        return response(null, 200);
+        return response("Updated", 200);
     }
 
     /**
@@ -60,6 +63,9 @@ class TasksController extends Controller
     public function destroy($id)
     {
         $task = Task::findOrFail($id);
+        if ($task->project->user->id != auth()->id()) {
+            return response("Forbidden", 403);
+        }
         $task->delete();
         return response(null, 204);
     }
