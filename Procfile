@@ -1,2 +1,2 @@
-release: php artisan migrate && cp .env.heroku .env
+release: cp .env.heroku .env && php artisan migrate
 web: vendor/bin/heroku-php-apache2 public/
