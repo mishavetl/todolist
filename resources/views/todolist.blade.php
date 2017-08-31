@@ -18,20 +18,19 @@
         </div>
         <div class="panel-body">
             <div class="input-group task-manager">
-                <span class="input-group-btn">                            
-                    <button class="btn btn-default task-add-plus-btn" type="button">                                
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
+                <span class="input-group-addon" id="add-task-plus-addon">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </span>
-                <input type="text" class="form-control" placeholder="Start typing here to create a task">
+                <input type="text" class="form-control new-task-name"
+                    aria-describedby="add-task-plus-addon" placeholder="Start typing here to create a task">
                 <span class="input-group-btn">
-                    <button class="btn btn-success task-add-btn" type="button">
+                    <button class="btn btn-success task-add-btn add-task" type="button">
                         Add task
                     </button>
                 </span>
             </div>
-            <div class="tasks">
-                <ul class="list-group">
+            <div class="">
+                <ul class="list-group tasks">
                     @each('task', $todolist->tasks, 'task')
                 </ul>
             </div>

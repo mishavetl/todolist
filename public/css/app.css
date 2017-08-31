@@ -8354,7 +8354,7 @@ button.close {
   margin-bottom: 0px;
 }
 
-.task > .task-options * {
+.task .modify-options * {
   display: none;
 }
 
@@ -8363,7 +8363,7 @@ button.close {
   cursor: pointer;
 }
 
-.task-list-item:hover .task-options > * {
+.task-list-item:hover .modify-options > * {
   display: inline-block;
 }
 

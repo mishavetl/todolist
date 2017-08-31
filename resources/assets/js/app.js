@@ -1,38 +1,73 @@
 require('./bootstrap');
+require('./myBootstrap');
 
-axios.interceptors.response.use(undefined, error => {
-    const response = error.response;
-    if (response.status === 401) {
-        window.location.reload();
-    }
-    return Promise.reject(error);
-});
+import {
+    addEditableTextElement,
+    addEditableTextElementEvents,
+    registerEditableTextElementAddBtn
+} from './editableTextElement';
 
-import {addEditableTextElement, addEditableTextElementEvents} from './editableTextElement';
-
-var todolistAddBtn = document.querySelector('#add-todolist');
-var taskAddBtn = document.querySelector('#add-task');
 var todolistSnippet = document.querySelector('#todolist-snippet').lastChild;
-var taskSnippet = document.querySelector('#task-snippet');
+var taskSnippet = document.querySelector('#task-snippet').children[0];
+
+function setTaskFields(data, task)
+{
+    task.querySelector('.task-status').value = data.status;
+    task.setAttribute('data-todolist-id', data.project_id);
+}
+
+function getTaskFields(task)
+{
+    return {
+        'id': task.getAttribute('data-id'),
+        'name': task.querySelector('.task-name-edit').value,
+        'status': task.querySelector('.task-status').checked,
+        'project_id': task.getAttribute('data-todolist-id')
+    };
+}
+
+function getTodolistFields(todolist)
+{
+    return {
+        'id': todolist.getAttribute('data-id'),        
+        'name': todolist.querySelector('.todolist-name-edit').value,
+    };
+}
+
+function addTaskEvents(task, updateElem)
+{
+    task.querySelector('.task-status').addEventListener('change', updateElem);
+}
+
+function addTodolistEvents(todolist)
+{
+    var tasks = todolist.querySelector('.tasks');
+    var taskAddBtn = todolist.querySelector('.add-task');
+    registerEditableTextElementAddBtn(tasks, taskSnippet, 'task', taskAddBtn, function(todolist) {
+        return {
+            'name': todolist.querySelector('.new-task-name').value,
+            'status': false,
+            'project_id': todolist.getAttribute('data-id')
+        };
+    }, getTaskFields, addTaskEvents, setTaskFields, todolist);
+}
+
 var todolists = document.querySelector('#todolists');
-
-todolistAddBtn.addEventListener("click", function() {
-    axios.post('/todolists', {
+var todolistAddBtn = document.querySelector('#add-todolist');
+registerEditableTextElementAddBtn(todolists, todolistSnippet, 'todolist', todolistAddBtn, function(parent) {
+    return {
         'name': "Todo list"
-    })
-    .then(function (response) {
-        addEditableTextElement(todolists, todolistSnippet, 'todolist', response.data.id, response.data.name);
-        console.log(response);
-    })
-    .catch(function (error) {
-        console.log(error.response);
-    });
-});
+    };
+}, getTodolistFields, addTodolistEvents);
 
-// registerEditableTextElementAddBtn(todolists, todolistSnippet, 'todolist', todolistAddBtn);
-
-var todolistObjects = document.querySelectorAll('.todolist');
-
+var todolistObjects = todolists.querySelectorAll('.todolist');
 for (var i = 0; i < todolistObjects.length; i++){
-    addEditableTextElementEvents('todolist', todolistObjects[i]);
+    var todolist = todolistObjects[i];
+    var tasks = todolist.querySelector('.tasks');    
+    var taskObjects = tasks.querySelectorAll('.task');    
+    
+    addEditableTextElementEvents('todolist', todolist, getTodolistFields, addTodolistEvents);    
+    for (var j = 0; j < taskObjects.length; j++) {
+        addEditableTextElementEvents('task', taskObjects[j], getTaskFields, addTaskEvents);
+    }
 }

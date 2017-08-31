@@ -746,7 +746,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(8);
-module.exports = __webpack_require__(36);
+module.exports = __webpack_require__(37);
 
 
 /***/ }),
@@ -755,94 +755,70 @@ module.exports = __webpack_require__(36);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__editableTextElement__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__editableTextElement__ = __webpack_require__(36);
 __webpack_require__(9);
-
-axios.interceptors.response.use(undefined, function (error) {
-    var response = error.response;
-    if (response.status === 401) {
-        window.location.reload();
-    }
-    return Promise.reject(error);
-});
+__webpack_require__(35);
 
 
-
-var todolistAddBtn = document.querySelector('#add-todolist');
 
 var todolistSnippet = document.querySelector('#todolist-snippet').lastChild;
-var taskSnippet = document.querySelector('#task-snippet');
+var taskSnippet = document.querySelector('#task-snippet').children[0];
+
+function setTaskFields(data, task) {
+    task.querySelector('.task-status').value = data.status;
+    task.setAttribute('data-todolist-id', data.project_id);
+}
+
+function getTaskFields(task) {
+    return {
+        'id': task.getAttribute('data-id'),
+        'name': task.querySelector('.task-name-edit').value,
+        'status': task.querySelector('.task-status').checked,
+        'project_id': task.getAttribute('data-todolist-id')
+    };
+}
+
+function getTodolistFields(todolist) {
+    return {
+        'id': todolist.getAttribute('data-id'),
+        'name': todolist.querySelector('.todolist-name-edit').value
+    };
+}
+
+function addTaskEvents(task, updateElem) {
+    task.querySelector('.task-status').addEventListener('change', updateElem);
+}
+
+function addTodolistEvents(todolist) {
+    var tasks = todolist.querySelector('.tasks');
+    var taskAddBtn = todolist.querySelector('.add-task');
+    Object(__WEBPACK_IMPORTED_MODULE_0__editableTextElement__["b" /* registerEditableTextElementAddBtn */])(tasks, taskSnippet, 'task', taskAddBtn, function (todolist) {
+        return {
+            'name': todolist.querySelector('.new-task-name').value,
+            'status': false,
+            'project_id': todolist.getAttribute('data-id')
+        };
+    }, getTaskFields, addTaskEvents, setTaskFields, todolist);
+}
+
 var todolists = document.querySelector('#todolists');
-
-// function addTodolist(id, name)
-// {
-//     var todolist = todolistSnippet.cloneNode(true);
-//     todolists.appendChild(todolist);
-//     todolist.setAttribute('id', 'todolist-' + id);
-//     todolist.setAttribute('data-id', id);
-//     addTodolistEvents(todolist)
-//     todolist.querySelector('.todolist-name').textContent = name;
-//     todolist.querySelector('.todolist-name-edit').value = name;
-// }
-
-// function addTodolistEvents(todolist)
-// {
-//     var todolistId = todolist.getAttribute('data-id');
-
-//     todolist.querySelector('.todolist-delete').addEventListener('click', function() {
-//         axios.delete('/projects/' + todolistId)
-//             .then(function (response) {
-//                 todolist.parentNode.removeChild(todolist);
-//                 console.log(response);
-//             })
-//             .catch(function (error) {
-//                 console.log(error.response);
-//             });
-//     }, false);
-
-//     todolistUpdateElement = todolist.querySelector('.todolist-update');
-//     todolistUpdateElement.addEventListener('click', function() {
-//         var todolistNameElement = todolist.querySelector('.todolist-name');
-//         var todolistNameEditElement = todolist.querySelector('.todolist-name-edit');
-//         function updateTodolistName() {
-//             axios.put('/projects/' + todolistId, {
-//                 'name': todolistNameEditElement.value
-//             })
-//             .then(function (response) {
-//                 todolistNameElement.textContent = todolistNameEditElement.value;
-//                 todolistNameElement.style.display = "block";
-//                 todolistNameEditElement.style.display = "none";
-//                 todolistNameEditElement.classList.remove("error");                            
-//                 console.log(response);
-//             })
-//             .catch(function (error) {
-//                 todolistNameEditElement.classList.add("error");
-//                 console.log(error.response);
-//             });
-//         }
-//         todolistNameElement.style.display = "none";
-//         todolistNameEditElement.style.display = "block";        
-//         todolistUpdateElement.addEventListener("click", updateTodolistName);
-//         todolistNameEditElement.addEventListener("blur", updateTodolistName);
-//         todolistNameEditElement.focus();
-//     }, false);
-// }
-
-todolistAddBtn.addEventListener("click", function () {
-    axios.post('/todolists', {
+var todolistAddBtn = document.querySelector('#add-todolist');
+Object(__WEBPACK_IMPORTED_MODULE_0__editableTextElement__["b" /* registerEditableTextElementAddBtn */])(todolists, todolistSnippet, 'todolist', todolistAddBtn, function (parent) {
+    return {
         'name': "Todo list"
-    }).then(function (response) {
-        Object(__WEBPACK_IMPORTED_MODULE_0__editableTextElement__["a" /* addEditableTextElement */])(todolists, todolistSnippet, 'todolist', response.data.id, response.data.name);
-        console.log(response);
-    }).catch(function (error) {
-        console.log(error.response);
-    });
-});
+    };
+}, getTodolistFields, addTodolistEvents);
 
-var todolistObjects = document.querySelectorAll('.todolist');
-
+var todolistObjects = todolists.querySelectorAll('.todolist');
 for (var i = 0; i < todolistObjects.length; i++) {
-    Object(__WEBPACK_IMPORTED_MODULE_0__editableTextElement__["b" /* addEditableTextElementEvents */])('todolist', todolistObjects[i]);
+    var todolist = todolistObjects[i];
+    var tasks = todolist.querySelector('.tasks');
+    var taskObjects = tasks.querySelectorAll('.task');
+
+    Object(__WEBPACK_IMPORTED_MODULE_0__editableTextElement__["a" /* addEditableTextElementEvents */])('todolist', todolist, getTodolistFields, addTodolistEvents);
+    for (var j = 0; j < taskObjects.length; j++) {
+        Object(__WEBPACK_IMPORTED_MODULE_0__editableTextElement__["a" /* addEditableTextElementEvents */])('task', taskObjects[j], getTaskFields, addTaskEvents);
+    }
 }
 
 /***/ }),
@@ -31759,24 +31735,76 @@ module.exports = function spread(callback) {
 
 /***/ }),
 /* 35 */
+/***/ (function(module, exports) {
+
+axios.interceptors.response.use(undefined, function (error) {
+    var response = error.response;
+    if (response.status === 401) {
+        window.location.reload();
+    }
+    return Promise.reject(error);
+});
+
+/***/ }),
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return addEditableTextElement; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return addEditableTextElementEvents; });
+/* unused harmony export addEditableTextElement */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return addEditableTextElementEvents; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return registerEditableTextElementAddBtn; });
 
 
-function addEditableTextElement(elems, snippet, namespace, id, name) {
-    var elem = snippet.cloneNode(true);
-    elems.appendChild(elem);
-    elem.setAttribute('id', namespace + '-' + id);
-    elem.setAttribute('data-id', id);
-    addEditableTextElementEvents(namespace, elem);
-    elem.querySelector('.' + namespace + '-name').textContent = name;
-    elem.querySelector('.' + namespace + '-name-edit').value = name;
+// function showHide(elem1, elem2)
+// {
+//     var elem1Display = elem1.style.display;
+//     elem1.style.display = elem2.style.display;
+//     elem2.style.display = elem1Display;
+// }
+
+function show(elem) {
+    elem.style.display = "block";
 }
 
-function addEditableTextElementEvents(namespace, elem) {
+function hide(elem) {
+    elem.style.display = "none";
+}
+
+function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defaultsCallback, gettersCallback) {
+    var settersCallback = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : function () {};
+    var eventsCallback = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : function () {};
+    var parent = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : document;
+
+    btn.addEventListener("click", function () {
+        var newElemName = parent.querySelector('.new-' + namespace + '-name');
+        axios.post('/' + namespace + 's', defaultsCallback(parent)).then(function (response) {
+            if (newElemName != null) {
+                newElemName.value = "";
+                newElemName.classList.remove('error');
+            }
+            addEditableTextElement(elems, snippet, namespace, response.data, gettersCallback, eventsCallback, settersCallback);
+            console.log(response);
+        }).catch(function (error) {
+            if (newElemName != null) newElemName.classList.add('error');
+            console.log(error);
+        });
+    });
+}
+
+function addEditableTextElement(elems, snippet, namespace, data, gettersCallback, settersCallback, eventsCallback) {
+    var elem = snippet.cloneNode(true);
+    elems.appendChild(elem);
+    elem.setAttribute('id', namespace + '-' + data.id);
+    elem.setAttribute('data-id', data.id);
+    elem.querySelector('.' + namespace + '-name').textContent = data.name;
+    elem.querySelector('.' + namespace + '-name-edit').value = data.name;
+    addEditableTextElementEvents(namespace, elem, gettersCallback, eventsCallback);
+    settersCallback(data, elem);
+}
+
+function addEditableTextElementEvents(namespace, elem, gettersCallback) {
+    var eventsCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
+
     var elemId = elem.getAttribute('data-id');
 
     elem.querySelector('.' + namespace + '-delete').addEventListener('click', function () {
@@ -31784,37 +31812,41 @@ function addEditableTextElementEvents(namespace, elem) {
             elem.parentNode.removeChild(elem);
             console.log(response);
         }).catch(function (error) {
-            console.log(error.response);
+            console.log(error);
         });
     }, false);
 
+    var elemNameElement = elem.querySelector('.' + namespace + '-name');
+    var elemNameEditElement = elem.querySelector('.' + namespace + '-name-edit');
     var elemUpdateElement = elem.querySelector('.' + namespace + '-update');
+
+    function updateElem() {
+        axios.put('/' + namespace + 's/' + elemId, gettersCallback(elem)).then(function (response) {
+            elemNameElement.textContent = elemNameEditElement.value;
+            show(elemNameElement);
+            hide(elemNameEditElement);
+            elemNameEditElement.classList.remove("error");
+            console.log(response);
+        }).catch(function (error) {
+            hide(elemNameElement);
+            show(elemNameEditElement);
+            elemNameEditElement.classList.add("error");
+            console.log(error);
+        });
+    }
+
     elemUpdateElement.addEventListener('click', function () {
-        var elemNameElement = elem.querySelector('.' + namespace + '-name');
-        var elemNameEditElement = elem.querySelector('.' + namespace + '-name-edit');
-        function updateElemName() {
-            axios.put('/' + namespace + 's/' + elemId, {
-                'name': elemNameEditElement.value
-            }).then(function (response) {
-                elemNameElement.textContent = elemNameEditElement.value;
-                elemNameElement.style.display = "block";
-                elemNameEditElement.style.display = "none";
-                elemNameEditElement.classList.remove("error");
-                console.log(response);
-            }).catch(function (error) {
-                elemNameEditElement.classList.add("error");
-                console.log(error.response);
-            });
-        }
-        elemNameElement.style.display = "none";
-        elemNameEditElement.style.display = "block";
-        elemNameEditElement.addEventListener("blur", updateElemName);
+        hide(elemNameElement);
+        show(elemNameEditElement);
+        elemNameEditElement.addEventListener("blur", updateElem);
         elemNameEditElement.focus();
     }, false);
+
+    eventsCallback(elem, updateElem);
 }
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

@@ -10,7 +10,7 @@ class TasksController extends Controller
     private static $validationRules = [
         'name' => 'required|max:255',
         'status' => 'required|boolean',
-        'project_id' => 'required|exists:projects'
+        'project_id' => 'required|exists:projects,id'
     ];
 
     /**
@@ -23,7 +23,7 @@ class TasksController extends Controller
     {
         $this->validate($request, self::$validationRules);
         
-        $task = Project::create([
+        $task = Task::create([
             'name' => request('name'),
             'status' => request('status'),
             'project_id' => request('project_id')
