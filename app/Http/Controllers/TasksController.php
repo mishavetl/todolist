@@ -10,7 +10,8 @@ class TasksController extends Controller
     private static $validationRules = [
         'name' => 'required|max:255',
         'status' => 'required|boolean',
-        'project_id' => 'required|exists:projects,id'
+        'project_id' => 'required|exists:projects,id',
+        'deadline' => 'nullable|date_format:Y-m-d H:i:s'
     ];
 
     /**
@@ -26,7 +27,8 @@ class TasksController extends Controller
         $task = Task::create([
             'name' => request('name'),
             'status' => request('status'),
-            'project_id' => request('project_id')
+            'project_id' => request('project_id'),
+            'deadline' => request('deadline')
         ]);
         
         return response($task, 201);
@@ -49,6 +51,7 @@ class TasksController extends Controller
         $task->name = request('name');
         $task->status = request('status');
         $task->project_id = request('project_id');
+        $task->deadline = request('deadline');
         $task->save();
 
         return response("Updated", 200);

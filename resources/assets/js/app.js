@@ -18,10 +18,12 @@ function setTaskFields(data, task)
 
 function getTaskFields(task)
 {
+    var deadline = task.querySelector('.task-deadline-field').value;
     return {
         'id': task.getAttribute('data-id'),
         'name': task.querySelector('.task-name-edit').value,
         'status': task.querySelector('.task-status').checked,
+        'deadline': deadline.length == 0 ? null : deadline,
         'project_id': task.getAttribute('data-todolist-id')
     };
 }

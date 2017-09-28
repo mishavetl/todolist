@@ -85,14 +85,10 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback, eventsCa
         });
     }, false);
 
-    var dateTimePicker = $('.' + namespace + '-date-time-picker');
+    var elemDeadline = elem.querySelector('.' + namespace + '-deadline');
     var elemNameElement = elem.querySelector('.' + namespace + '-name');
     var elemNameEditElement = elem.querySelector('.' + namespace + '-name-edit');
     var elemUpdateElement = elem.querySelector('.' + namespace + '-update');
-
-    if (dateTimePicker != null) {
-        addDateTimePicker(dateTimePicker);
-    }
 
     function updateElem() {
         axios.put('/' + namespace + 's/' + elemId, gettersCallback(elem))
@@ -109,6 +105,12 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback, eventsCa
             elemNameEditElement.classList.add('error');
             console.log(error);
         });
+    }
+
+    if (elemDeadline != null) {
+        var elemDeadlineField = elemDeadline.querySelector('.' + namespace + '-deadline-field');    
+        addDateTimePicker($(elemDeadline));
+        elemDeadlineField.addEventListener('blur', updateElem);
     }
 
     elemNameEditElement.addEventListener('blur', updateElem);

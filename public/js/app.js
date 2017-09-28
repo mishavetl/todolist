@@ -26608,10 +26608,12 @@ function setTaskFields(data, task) {
 }
 
 function getTaskFields(task) {
+    var deadline = task.querySelector('.task-deadline-field').value;
     return {
         'id': task.getAttribute('data-id'),
         'name': task.querySelector('.task-name-edit').value,
         'status': task.querySelector('.task-status').checked,
+        'deadline': deadline.length == 0 ? null : deadline,
         'project_id': task.getAttribute('data-todolist-id')
     };
 }
@@ -50277,14 +50279,10 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback) {
         });
     }, false);
 
-    var dateTimePicker = $('.' + namespace + '-date-time-picker');
+    var elemDeadline = elem.querySelector('.' + namespace + '-deadline');
     var elemNameElement = elem.querySelector('.' + namespace + '-name');
     var elemNameEditElement = elem.querySelector('.' + namespace + '-name-edit');
     var elemUpdateElement = elem.querySelector('.' + namespace + '-update');
-
-    if (dateTimePicker != null) {
-        Object(__WEBPACK_IMPORTED_MODULE_0__dateTimePicker__["a" /* addDateTimePicker */])(dateTimePicker);
-    }
 
     function updateElem() {
         axios.put('/' + namespace + 's/' + elemId, gettersCallback(elem)).then(function (response) {
@@ -50299,6 +50297,12 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback) {
             elemNameEditElement.classList.add('error');
             console.log(error);
         });
+    }
+
+    if (elemDeadline != null) {
+        var elemDeadlineField = elemDeadline.querySelector('.' + namespace + '-deadline-field');
+        Object(__WEBPACK_IMPORTED_MODULE_0__dateTimePicker__["a" /* addDateTimePicker */])($(elemDeadline));
+        elemDeadlineField.addEventListener('blur', updateElem);
     }
 
     elemNameEditElement.addEventListener('blur', updateElem);
@@ -50326,7 +50330,9 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback) {
 
 
 function addDateTimePicker(elem) {
-    elem.datetimepicker();
+    elem.datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
 }
 
 /***/ }),

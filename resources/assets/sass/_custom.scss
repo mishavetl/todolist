@@ -11,6 +11,17 @@
     cursor: pointer;
 }
 
+.row {
+    display: flex;
+    align-items: center;
+}
+
+.task {
+    .form-group, .row p {
+        margin-bottom: 0px;
+    }
+}
+
 // .task-list-item:hover .modify-options > * {
 //     display: inline-block;
 // }

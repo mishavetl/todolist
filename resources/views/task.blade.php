@@ -10,8 +10,8 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <div class='input-group date task-date-time-picker'>
-                    <input type='text' class="form-control" />
+                <div class='input-group date task-deadline'>
+                    <input type='text' class="form-control task-deadline-field" value="{{ $task->deadline }}" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
