@@ -13,24 +13,25 @@ export {
 
 function show(elem)
 {
-    elem.style.display = "block";
+    elem.style.display = 'block';
 }
 
 function hide(elem)
 {
-    elem.style.display = "none";
+    elem.style.display = 'none';
 }
 
 function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defaultsCallback,
     gettersCallback, settersCallback = function() {}, eventsCallback = function() {},
     parent = document
 ) {
-    btn.addEventListener("click", function() {
-        var newElemName = parent.querySelector('.new-' + namespace + '-name');
+    var newElemName = parent.querySelector('.new-' + namespace + '-name');
+    
+    function createElem() {
         axios.post('/' + namespace + 's', defaultsCallback(parent))
         .then(function (response) {
             if (newElemName != null) {
-                newElemName.value = "";
+                newElemName.value = '';
                 newElemName.classList.remove('error');
             }            
             addEditableTextElement(elems, snippet, namespace, response.data,
@@ -41,7 +42,16 @@ function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defau
             if (newElemName != null) newElemName.classList.add('error');
             console.log(error);
         });
-    });
+    }
+
+    btn.addEventListener('click', createElem);
+    if (newElemName != null) {
+        newElemName.addEventListener('keydown', event => {
+            if (event.keyCode == 13) {
+                createElem();
+            }
+        });
+    }
 }
 
 function addEditableTextElement(elems, snippet, namespace, data, gettersCallback, settersCallback, eventsCallback)
@@ -81,21 +91,27 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback, eventsCa
             elemNameElement.textContent = elemNameEditElement.value;
             show(elemNameElement);
             hide(elemNameEditElement);
-            elemNameEditElement.classList.remove("error");
+            elemNameEditElement.classList.remove('error');
             console.log(response);
         })
         .catch(function (error) {
             hide(elemNameElement);
             show(elemNameEditElement);    
-            elemNameEditElement.classList.add("error");
+            elemNameEditElement.classList.add('error');
             console.log(error);
         });
     }
 
+    elemNameEditElement.addEventListener('blur', updateElem);
+    elemNameEditElement.addEventListener('keydown', event => {
+        if (event.keyCode == 13) {
+            updateElem();
+        }
+    });
+    
     elemUpdateElement.addEventListener('click', function() {
         hide(elemNameElement);
         show(elemNameEditElement);
-        elemNameEditElement.addEventListener("blur", updateElem);
         elemNameEditElement.focus();
     }, false);
 
