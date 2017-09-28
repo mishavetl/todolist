@@ -4,6 +4,10 @@ export {
     registerEditableTextElementAddBtn
 };
 
+import {
+    addDateTimePicker
+} from './dateTimePicker';
+
 // function showHide(elem1, elem2)
 // {
 //     var elem1Display = elem1.style.display;
@@ -81,9 +85,14 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback, eventsCa
         });
     }, false);
 
+    var dateTimePicker = $('.' + namespace + '-date-time-picker');
     var elemNameElement = elem.querySelector('.' + namespace + '-name');
     var elemNameEditElement = elem.querySelector('.' + namespace + '-name-edit');
     var elemUpdateElement = elem.querySelector('.' + namespace + '-update');
+
+    if (dateTimePicker != null) {
+        addDateTimePicker(dateTimePicker);
+    }
 
     function updateElem() {
         axios.put('/' + namespace + 's/' + elemId, gettersCallback(elem))

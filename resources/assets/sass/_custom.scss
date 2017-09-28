@@ -2,8 +2,8 @@
     margin-bottom: 0px;
 }
 
-.task .modify-options * {
-    display: none;
+.task:not(:hover) .modify-options * {
+    color: transparent;
 }
 
 .modify-options > *:hover,
@@ -11,9 +11,9 @@
     cursor: pointer;
 }
 
-.task-list-item:hover .modify-options > * {
-    display: inline-block;
-}
+// .task-list-item:hover .modify-options > * {
+//     display: inline-block;
+// }
 
 input.error {
     border-color: red;
