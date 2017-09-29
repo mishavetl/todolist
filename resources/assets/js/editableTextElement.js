@@ -8,12 +8,21 @@ import {
     addDateTimePicker
 } from './dateTimePicker';
 
-// function showHide(elem1, elem2)
-// {
-//     var elem1Display = elem1.style.display;
-//     elem1.style.display = elem2.style.display;
-//     elem2.style.display = elem1Display;
-// }
+import {
+    triggerEvent
+} from './utils';
+
+function funcOnEnter(elem, func) {
+    elem.addEventListener('keydown', event => {
+        if (event.keyCode == 13) {
+            func();
+        }
+    });
+} 
+
+function blurOnEnter(elem) {
+    funcOnEnter(elem, () => triggerEvent(elem, 'blur'));
+}
 
 function show(elem)
 {
@@ -31,7 +40,7 @@ function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defau
 ) {
     var newElemName = parent.querySelector('.new-' + namespace + '-name');
     
-    function createElem() {
+    function createElement() {
         axios.post('/' + namespace + 's', defaultsCallback(parent))
         .then(function (response) {
             if (newElemName != null) {
@@ -48,13 +57,9 @@ function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defau
         });
     }
 
-    btn.addEventListener('click', createElem);
+    btn.addEventListener('click', createElement);
     if (newElemName != null) {
-        newElemName.addEventListener('keydown', event => {
-            if (event.keyCode == 13) {
-                createElem();
-            }
-        });
+        funcOnEnter(newElemName, createElement);
     }
 }
 
@@ -111,14 +116,11 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback, eventsCa
         var elemDeadlineField = elemDeadline.querySelector('.' + namespace + '-deadline-field');    
         addDateTimePicker($(elemDeadline));
         elemDeadlineField.addEventListener('blur', updateElem);
+        blurOnEnter(elemDeadlineField);
     }
 
     elemNameEditElement.addEventListener('blur', updateElem);
-    elemNameEditElement.addEventListener('keydown', event => {
-        if (event.keyCode == 13) {
-            updateElem();
-        }
-    });
+    blurOnEnter(elemNameEditElement);
     
     elemUpdateElement.addEventListener('click', function() {
         hide(elemNameElement);

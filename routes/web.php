@@ -14,9 +14,9 @@
 use App\Project;
 
 Route::get('/', function () {
-    // $todolists = Project::all();
     $todolists = auth()->user()->projects;
-    return view('index', compact('todolists'));
+    $user = auth()->user();
+    return view('index', compact('todolists', 'user'));
 })->middleware('auth');
 
 Route::resource('/todolists', 'ProjectsController', [

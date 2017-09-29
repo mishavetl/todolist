@@ -50187,10 +50187,29 @@ module.exports = function spread(callback) {
 /* 153 */
 /***/ (function(module, exports) {
 
-axios.interceptors.response.use(undefined, function (error) {
+var lastActionElement = document.querySelector('#last_action');
+
+axios.interceptors.request.use(function (config) {
+    if (config.data == undefined) {
+        config.data = {};
+    }
+    config.data['last_action'] = lastActionElement.value;
+    return config;
+}, function (error) {
+    document.querySelector('#problem-alert').style.display = 'block';
+    return Promise.reject(error);
+});
+
+axios.interceptors.response.use(function (okay) {
+    lastActionElement.value = okay.headers['last_action'];
+    return okay;
+}, function (error) {
     var response = error.response;
     if (response.status === 401) {
         window.location.reload();
+    } else if (response.status === 409) {
+        document.querySelector('#reload-alert').style.display = 'block';
+        window.scrollTo(0, 0);
     }
     return Promise.reject(error);
 });
@@ -50204,16 +50223,26 @@ axios.interceptors.response.use(undefined, function (error) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return addEditableTextElementEvents; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return registerEditableTextElementAddBtn; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dateTimePicker__ = __webpack_require__(155);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(166);
 
 
 
 
-// function showHide(elem1, elem2)
-// {
-//     var elem1Display = elem1.style.display;
-//     elem1.style.display = elem2.style.display;
-//     elem2.style.display = elem1Display;
-// }
+
+
+function funcOnEnter(elem, func) {
+    elem.addEventListener('keydown', function (event) {
+        if (event.keyCode == 13) {
+            func();
+        }
+    });
+}
+
+function blurOnEnter(elem) {
+    funcOnEnter(elem, function () {
+        return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* triggerEvent */])(elem, 'blur');
+    });
+}
 
 function show(elem) {
     elem.style.display = 'block';
@@ -50230,7 +50259,7 @@ function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defau
 
     var newElemName = parent.querySelector('.new-' + namespace + '-name');
 
-    function createElem() {
+    function createElement() {
         axios.post('/' + namespace + 's', defaultsCallback(parent)).then(function (response) {
             if (newElemName != null) {
                 newElemName.value = '';
@@ -50244,13 +50273,9 @@ function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defau
         });
     }
 
-    btn.addEventListener('click', createElem);
+    btn.addEventListener('click', createElement);
     if (newElemName != null) {
-        newElemName.addEventListener('keydown', function (event) {
-            if (event.keyCode == 13) {
-                createElem();
-            }
-        });
+        funcOnEnter(newElemName, createElement);
     }
 }
 
@@ -50303,14 +50328,11 @@ function addEditableTextElementEvents(namespace, elem, gettersCallback) {
         var elemDeadlineField = elemDeadline.querySelector('.' + namespace + '-deadline-field');
         Object(__WEBPACK_IMPORTED_MODULE_0__dateTimePicker__["a" /* addDateTimePicker */])($(elemDeadline));
         elemDeadlineField.addEventListener('blur', updateElem);
+        blurOnEnter(elemDeadlineField);
     }
 
     elemNameEditElement.addEventListener('blur', updateElem);
-    elemNameEditElement.addEventListener('keydown', function (event) {
-        if (event.keyCode == 13) {
-            updateElem();
-        }
-    });
+    blurOnEnter(elemNameEditElement);
 
     elemUpdateElement.addEventListener('click', function () {
         hide(elemNameElement);
@@ -50340,6 +50362,37 @@ function addDateTimePicker(elem) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 157 */,
+/* 158 */,
+/* 159 */,
+/* 160 */,
+/* 161 */,
+/* 162 */,
+/* 163 */,
+/* 164 */,
+/* 165 */,
+/* 166 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return triggerEvent; });
+
+
+function triggerEvent(el, type) {
+    if ('createEvent' in document) {
+        // modern browsers, IE9+
+        var e = document.createEvent('HTMLEvents');
+        e.initEvent(type, false, true);
+        el.dispatchEvent(e);
+    } else {
+        // IE 8
+        var e = document.createEventObject();
+        e.eventType = type;
+        el.fireEvent('on' + e.eventType, e);
+    }
+}
 
 /***/ })
 /******/ ]);

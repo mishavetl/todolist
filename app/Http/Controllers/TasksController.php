@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Task;
 use Illuminate\Http\Request;
+use App\Http\Middleware\CheckLastAction;
+use App\Task;
 
 class TasksController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', CheckLastAction::class]);
+    }
+
     private static $validationRules = [
         'name' => 'required|max:255',
         'status' => 'required|boolean',
@@ -46,7 +52,7 @@ class TasksController extends Controller
         $this->validate($request, self::$validationRules);
         $task = Task::findOrFail($id);
         if ($task->project->user->id != auth()->id()) {
-            return response("Forbidden", 403);
+            return response('Forbidden', 403);
         }
         $task->name = request('name');
         $task->status = request('status');
@@ -54,7 +60,7 @@ class TasksController extends Controller
         $task->deadline = request('deadline');
         $task->save();
 
-        return response("Updated", 200);
+        return response('Updated', 200);
     }
 
     /**
@@ -67,7 +73,7 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
         if ($task->project->user->id != auth()->id()) {
-            return response("Forbidden", 403);
+            return response('Forbidden', 403);
         }
         $task->delete();
         return response(null, 204);

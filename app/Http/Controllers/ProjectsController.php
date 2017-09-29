@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Http\Middleware\CheckLastAction;
 use App\Project;
 
 class ProjectsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth', CheckLastAction::class]);
     }
 
     private static $validationRules = [
@@ -47,12 +48,12 @@ class ProjectsController extends Controller
         $this->validate($request, self::$validationRules);
         $project = Project::findOrFail($id);
         if ($project->user->id != auth()->id()) {
-            return response("Forbidden", 403);
+            return response('Forbidden', 403);
         }
         $project->name = request('name');
         $project->save();
 
-        return response("Updated", 200);
+        return response('Updated', 200);
     }
 
     /**
@@ -65,7 +66,7 @@ class ProjectsController extends Controller
     {
         $project = Project::findOrFail($id);
         if ($project->user->id != auth()->id()) {
-            return response("Forbidden", 403);
+            return response('Forbidden', 403);
         }
         $project->delete();
         return response(null, 204);

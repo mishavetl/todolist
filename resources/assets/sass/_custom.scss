@@ -22,10 +22,18 @@
     }
 }
 
+#reload-alert, #problem-alert {
+    display: none;
+}
+
+#add-todolist {
+    margin-bottom: 10px;
+}
+
 // .task-list-item:hover .modify-options > * {
 //     display: inline-block;
 // }
 
-input.error {
+input.error, input.error:focus {
     border-color: red;
 }

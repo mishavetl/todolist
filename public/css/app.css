@@ -8812,7 +8812,17 @@ button.close {
   margin-bottom: 0px;
 }
 
-input.error {
+#reload-alert,
+#problem-alert {
+  display: none;
+}
+
+#add-todolist {
+  margin-bottom: 10px;
+}
+
+input.error,
+input.error:focus {
   border-color: red;
 }
 

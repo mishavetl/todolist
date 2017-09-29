@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDeadlineToTasksTable extends Migration
+class AddLastActionAtToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddDeadlineToTasksTable extends Migration
      */
     public function up()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->dateTime('deadline')->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->double('last_action')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ class AddDeadlineToTasksTable extends Migration
      */
     public function down()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->dropColumn('deadline');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('last_action');
         });
     }
 }

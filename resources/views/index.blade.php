@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('content')
 
+<input id="last_action" type="hidden" value="{{ $user->last_action }}">
+
 <div id="task-snippet" style="display: none;">
     @include('task', ['task' => new \App\Task()])        
 </div> 
