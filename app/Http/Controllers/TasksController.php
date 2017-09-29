@@ -8,10 +8,8 @@ use App\Task;
 
 class TasksController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', CheckLastAction::class]);
-    }
+    public static $priorityMax = 9223372036854775807;
+    public static $priorityMin = -9223372036854775808;
 
     private static $validationRules = [
         'name' => 'required|max:255',
@@ -19,6 +17,11 @@ class TasksController extends Controller
         'project_id' => 'required|exists:projects,id',
         'deadline' => 'nullable|date_format:Y-m-d H:i:s'
     ];
+
+    public function __construct()
+    {
+        $this->middleware(['auth', CheckLastAction::class]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -34,7 +37,11 @@ class TasksController extends Controller
             'name' => request('name'),
             'status' => request('status'),
             'project_id' => request('project_id'),
-            'deadline' => request('deadline')
+            'deadline' => request('deadline'),
+            // 'priority' => getPriority(
+            //     [],
+            //     Task::where(['user' => auth()->user()])->orderBy('priority'),
+            //     $priorityMin, $priorityMax),
         ]);
         
         return response($task, 201);
