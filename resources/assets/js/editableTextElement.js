@@ -18,7 +18,7 @@ function funcOnEnter(elem, func) {
             func();
         }
     });
-} 
+}
 
 function blurOnEnter(elem) {
     funcOnEnter(elem, () => triggerEvent(elem, 'blur'));
@@ -32,6 +32,20 @@ function show(elem)
 function hide(elem)
 {
     elem.style.display = 'none';
+}
+
+function moveUp(elem)
+{
+    if (elem.previousSibling) {
+        elem.parentNode.insertBefore(elem, elem.previousSibling);
+    }
+}
+
+function moveDown(elem)
+{
+    if (elem.nextSibling && elem.nextSibling.nextSibling) {
+        elem.parentNode.insertBefore(elem, elem.nextSibling.nextSibling);
+    }
 }
 
 function registerEditableTextElementAddBtn(elems, snippet, namespace, btn, defaultsCallback,
@@ -78,6 +92,39 @@ function addEditableTextElement(elems, snippet, namespace, data, gettersCallback
 function addEditableTextElementEvents(namespace, elem, gettersCallback, eventsCallback = function () {})
 {
     var elemId = elem.getAttribute('data-id');
+
+    var elemMoveUp = elem.querySelector('.' + namespace + '-up');
+    var elemMoveDown = elem.querySelector('.' + namespace + '-down');
+
+    if (elemMoveUp) {
+        elemMoveUp.addEventListener('click', function() {
+            axios.put('/' + namespace + 's/' + elemId + '/priority', {
+                priority: 1
+            })
+            .then(function (response) {
+                moveUp(elem);
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }, false);
+    }
+
+    if (elemMoveDown) {
+        elemMoveDown.addEventListener('click', function() {
+            axios.put('/' + namespace + 's/' + elemId + '/priority', {
+                priority: -1
+            })
+            .then(function (response) {
+                moveDown(elem);
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }, false);
+    }
 
     elem.querySelector('.' + namespace + '-delete').addEventListener('click', function() {
         axios.delete('/' + namespace + 's/' + elemId)

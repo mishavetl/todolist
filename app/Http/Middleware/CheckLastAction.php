@@ -23,14 +23,15 @@ class CheckLastAction
     {
         $user = auth()->user();
         $last_action = (float) request('last_action');
+        
+        if ($user->block) {
+            return response('Locked', 423);
+        }
+        
         if (!$skipTimestamp && $user->last_action != null
             && ($last_action == null || !$this->compareDouble($user->last_action, $last_action))
         ) {
             return response('Conflict', 409);
-        }
-
-        if ($user->block) {
-            return response('Locked', 423);
         }
 
         $user->block = true;

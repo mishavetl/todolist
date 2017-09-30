@@ -19,6 +19,8 @@
             </div>
         </div>
         <div class="col-md-1 modify-options">
+            <span class="glyphicon glyphicon-chevron-up task-up" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-chevron-down task-down" aria-hidden="true"></span>
             <span class="glyphicon glyphicon-pencil task-update" aria-hidden="true"></span>
             <span class="glyphicon glyphicon-trash task-delete" aria-hidden="true"></span>
         </div>

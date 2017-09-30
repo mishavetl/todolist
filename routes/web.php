@@ -28,5 +28,6 @@ Route::resource('/tasks', 'TasksController', [
 ]);
 
 Route::get('/tasks/optimize', 'TasksController@optimize');
+Route::put('/tasks/{id}/priority', 'TasksController@priority');
 
 Auth::routes();
