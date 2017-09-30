@@ -13,7 +13,7 @@ class Task extends Model
      */
     protected $table = 'tasks';
 
-    protected $fillable = ['name', 'status', 'project_id', 'deadline'];
+    protected $fillable = ['name', 'status', 'project_id', 'deadline', 'priority'];
 
     public function project()
     {

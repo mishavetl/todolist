@@ -31,7 +31,7 @@
             </div>
             <div class="">
                 <ul class="list-group tasks">
-                    @each('task', $todolist->tasks, 'task')
+                    @each('task', $todolist->tasks()->orderBy('priority', 'desc')->get(), 'task')
                 </ul>
             </div>
         </div>

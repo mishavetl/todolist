@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Middleware\CheckLastAction;
 use App\Task;
+use App\Project;
 
 class TasksController extends Controller
 {
-    public static $priorityMax = 9223372036854775807;
-    public static $priorityMin = -9223372036854775808;
+    const priorityMax = 9000000000000;
+    const priorityMin = -9000000000001;
 
     private static $validationRules = [
         'name' => 'required|max:255',
@@ -20,7 +21,9 @@ class TasksController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth', CheckLastAction::class]);
+        $this->middleware('auth');
+        $this->middleware('App\Http\Middleware\CheckLastAction')->except('optimize');
+        $this->middleware('App\Http\Middleware\CheckLastAction:true')->only('optimize');
     }
 
     /**
@@ -38,10 +41,10 @@ class TasksController extends Controller
             'status' => request('status'),
             'project_id' => request('project_id'),
             'deadline' => request('deadline'),
-            // 'priority' => getPriority(
-            //     [],
-            //     Task::where(['user' => auth()->user()])->orderBy('priority'),
-            //     $priorityMin, $priorityMax),
+            'priority' => getPriority(
+                [],
+                Project::findOrFail(request('project_id'))->tasks()->orderBy('priority')->get(),
+                self::priorityMin, self::priorityMax),
         ]);
         
         return response($task, 201);
@@ -66,6 +69,23 @@ class TasksController extends Controller
         $task->project_id = request('project_id');
         $task->deadline = request('deadline');
         $task->save();
+
+        return response('Updated', 200);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function optimize()
+    {
+        foreach (auth()->user()->projects()->get() as $project) {
+            optimizePriority($project->tasks()->orderBy('priority')->get(),
+                self::priorityMin, self::priorityMax);
+        }
 
         return response('Updated', 200);
     }

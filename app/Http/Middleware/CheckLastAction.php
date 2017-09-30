@@ -19,20 +19,33 @@ class CheckLastAction
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, $skipTimestamp = false)
     {
         $user = auth()->user();
         $last_action = (float) request('last_action');
-        if ($user->last_action != null && ($last_action == null || !$this->compareDouble($user->last_action, $last_action))) {
+        if (!$skipTimestamp && $user->last_action != null
+            && ($last_action == null || !$this->compareDouble($user->last_action, $last_action))
+        ) {
             return response('Conflict', 409);
         }
 
+        if ($user->block) {
+            return response('Locked', 423);
+        }
+
+        $user->block = true;
+        $user->last_action = microtime(true);
+        $user->save();
+        
+        $response = $next($request);
+
+        $user = auth()->user();
+        $user->block = false;
         $user->last_action = microtime(true);
         $user->save();
 
-        $response = $next($request);
         $response->header('last_action', $user->last_action);
-
+        
         return $response;
     }
 }

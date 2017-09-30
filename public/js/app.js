@@ -26584,7 +26584,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(126);
-module.exports = __webpack_require__(156);
+module.exports = __webpack_require__(157);
 
 
 /***/ }),
@@ -50196,12 +50196,15 @@ axios.interceptors.request.use(function (config) {
     config.data['last_action'] = lastActionElement.value;
     return config;
 }, function (error) {
-    document.querySelector('#problem-alert').style.display = 'block';
+    // document.querySelector('#problem-alert').style.display = 'block';
+    // window.scrollTo(0, 0);            
     return Promise.reject(error);
 });
 
 axios.interceptors.response.use(function (okay) {
     lastActionElement.value = okay.headers['last_action'];
+    document.querySelector('#reload-alert').style.display = 'none';
+    document.querySelector('#pending-alert').style.display = 'none';
     return okay;
 }, function (error) {
     var response = error.response;
@@ -50210,6 +50213,12 @@ axios.interceptors.response.use(function (okay) {
     } else if (response.status === 409) {
         document.querySelector('#reload-alert').style.display = 'block';
         window.scrollTo(0, 0);
+    } else if (response.status === 423) {
+        document.querySelector('#pending-alert').style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+    if (response.headers['last_action']) {
+        lastActionElement.value = response.headers['last_action'];
     }
     return Promise.reject(error);
 });
@@ -50223,7 +50232,7 @@ axios.interceptors.response.use(function (okay) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return addEditableTextElementEvents; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return registerEditableTextElementAddBtn; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dateTimePicker__ = __webpack_require__(155);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(156);
 
 
 
@@ -50359,21 +50368,6 @@ function addDateTimePicker(elem) {
 
 /***/ }),
 /* 156 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 157 */,
-/* 158 */,
-/* 159 */,
-/* 160 */,
-/* 161 */,
-/* 162 */,
-/* 163 */,
-/* 164 */,
-/* 165 */,
-/* 166 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -50393,6 +50387,12 @@ function triggerEvent(el, type) {
         el.fireEvent('on' + e.eventType, e);
     }
 }
+
+/***/ }),
+/* 157 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

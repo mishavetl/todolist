@@ -27,4 +27,6 @@ Route::resource('/tasks', 'TasksController', [
     'only' => ['store', 'update', 'destroy'] 
 ]);
 
+Route::get('/tasks/optimize', 'TasksController@optimize');
+
 Auth::routes();

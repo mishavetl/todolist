@@ -15,6 +15,7 @@ class AddLastActionAtToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->double('last_action')->nullable();
+            $table->boolean('block')->default(false);
         });
     }
 
@@ -27,6 +28,7 @@ class AddLastActionAtToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('last_action');
+            $table->dropColumn('block');
         });
     }
 }

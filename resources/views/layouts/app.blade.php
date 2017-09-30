@@ -16,6 +16,7 @@
 <body>
     <div id="app">
         <div class="alert alert-danger" id="problem-alert" role="alert">Problem detected. Reload the page.</div>
+        <div class="alert alert-danger" id="pending-alert" role="alert">Operation is pending. Try again.</div>
         <div class="alert alert-danger" id="reload-alert" role="alert">The data is outdated. Reload the page.</div>
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">

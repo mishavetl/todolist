@@ -8813,7 +8813,8 @@ button.close {
 }
 
 #reload-alert,
-#problem-alert {
+#problem-alert,
+#pending-alert {
   display: none;
 }
 
